@@ -1,46 +1,25 @@
 import React from 'react';
-import StarRatings from 'react-star-ratings';
 import { Link } from "react-router-dom";
+import CardMovie from '../layout/CardMovie';
 
-const MovieList = (props) => {
-    let movie = props.nowPlaying;
-    const movieList = movie.slice(0, 4).map((item, index) => {
+const MovieList = ({trending}) => {
+    const movieList = trending.slice(0, 8).map((item, index) => {
         return (
-            <div className="col-md-3 col-sm-6" key={index}>
-                <div className="card">
-                    <Link to={`/movie/${item.id}`}>
-                        <img className="card-img-top" src={item.poster} alt={item.title} />
-                    </Link>
-                </div>
-                <div className="mt-3">
-                    <p>{item.title}</p>
-                    <p>Rate: {item.rating}</p>
-                    <StarRatings
-                        rating={item.rating}
-                        starDimension="20px"
-                        starSpacing="2px"
-                        starRatedColor="#f4c10f"
-                        numberOfStars={10}
-                    />
-                </div>
+            <div className="col-lg-3 col-sm-4 col-6" key={index}>
+                <CardMovie item={item}/>
             </div>
         )
     });
     return (
-        <div>
+        <div className="movie-trending">
             <div className="row mt-5">
-                <div className="col">
-                    <p className="font-weight-bold" style={{ color: "#5a606b",fontSize:"30px" }}>TRENDING MOVIES</p>
+                <div className="col-6 col-lg-6 col-md-6 col-sm-6 movie__title">
+                    <p className="font-weight-bold">TRENDING MOVIES</p>
                 </div>
-            </div>
-
-            <div className="row mt-2">
-                <div className="col">
-                    <div className="float-end">
-                        <Link to="/movietrending">
-                            <i className="fa fa-chevron-circle-right"></i>
-                        </Link>
-                    </div>
+                <div className="col-6 col-lg-6 col-md-6 col-sm-6 d-flex justify-content-end align-items-center">
+                    <Link to="/allmovies">
+                        <i className="fa fa-chevron-circle-right"></i>
+                    </Link>
                 </div>
             </div>
 

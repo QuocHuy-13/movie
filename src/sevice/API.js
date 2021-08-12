@@ -4,12 +4,12 @@ const apiKey = "155ab208ecb73edcacb25bfa60e78b78" ;
 const url = "https://api.themoviedb.org/3";
 const nowPlayingUrl = `${url}/movie/now_playing` ;
 const topratedUrl = `${url}/movie/top_rated`;
-const movieUrl = `${url}/movie`;
-const genreUrl = `${url}/genre/movie/list`;
 const moviesUrl = `${url}/discover/movie`;
-const personUrl = `${url}/trending/person/week`;
-const trendingmovie = `${url}/trending/all/day`;
+const allmovie = `${url}/trending/all/day`;
 const trendingmovieweek = `${url}/trending/all/week`;
+const tvseries = `${url}/discover/tv`;
+const genreUrl = `${url}/genre/movie/list`;
+const popular = `${url}/movie/popular`;
 
 export const fetchMovies = async () => {
     try {
@@ -20,15 +20,16 @@ export const fetchMovies = async () => {
                 page: 1
             }
         })
-        const posterUrl = 'https://image.tmdb.org/t/p/original/'
         const modifieldData = data.results.map((movie) => ({
             id: movie.id,
-            backPoster: posterUrl + movie.backdrop_path,
+            backPoster: movie.backdrop_path,
             popularity: movie.popularity,
             title: movie.title,
-            poster: posterUrl + movie.poster_path,
+            poster: movie.poster_path,
             overview: movie.overview,
             rating: movie.vote_average,
+            date: movie.release_date,
+            movie_type: "movie"
         }))
         return modifieldData;
     } catch (error) {} 
@@ -52,7 +53,6 @@ export const fetchGenre = async () => {
     } catch (error) {}
 }
 
-
 //Fetch Movie By Genre
 export const fetchMovieByGenre = async (genre_id,page) => {
     try {
@@ -64,40 +64,20 @@ export const fetchMovieByGenre = async (genre_id,page) => {
                 with_genres: genre_id
            }
         })
-        const posterUrl = 'https://image.tmdb.org/t/p/original/'
         const modifieldData = data.results.map((movie) => ({
             id: movie.id,
-            backPoster: posterUrl + movie.backdrop_path,
+            backPoster: movie.backdrop_path,
             popularity: movie.popularity,
             title: movie.title,
-            poster: posterUrl + movie.poster_path,
+            poster: movie.poster_path,
             overview: movie.overview,
             rating: movie.vote_average,
+            date: movie.release_date,
+            movie_type: "movie"
         }))
         return modifieldData;
     } catch (error) {}
 }
-
-
-//Fetch Person 
-export const fetchPersons = async () => {
-    try {
-        const {data} = await axios.get(personUrl,{
-            params: {
-                api_key: apiKey,
-            }
-        })
-        const modifieldData = data.results.map((person) => ({
-            id: person['id'],
-            popularity: person['popularity'],
-            name: person['name'],
-            profileImg: 'https://image.tmdb.org/t/p/w200' + person['profile_path'],
-            known: person['known_for_department']
-        }))
-        return modifieldData
-    } catch (error) {}
-}
-
 
 //Fetch Movie Top Rating
 export const fetchTopRates = async (page) => {
@@ -108,24 +88,25 @@ export const fetchTopRates = async (page) => {
                 page: page
             }
         })
-        const posterUrl = 'https://image.tmdb.org/t/p/original/'
         const modifieldData = data.results.map((toprate) => ({
             id: toprate.id,
-            backPoster: posterUrl + toprate.backdrop_path,
+            backPoster: toprate.backdrop_path,
             popularity: toprate.popularity,
             title: toprate.title,
-            poster: posterUrl + toprate.poster_path,
+            poster: toprate.poster_path,
             overview: toprate.overview,
             rating: toprate.vote_average,
+            date:toprate.release_date,
+            movie_type: "movie"
         }))
         return modifieldData;
     } catch (error) {}
 }
 
 //fetch Detail Movie by ID
-export const fetchMovieDetail = async (id) => {
+export const fetchMovieDetail = async (id,movie_type) => {
     try {
-        const  {data} = await axios.get(`${movieUrl}/${id}`,{
+        const  {data} = await axios.get(`${url}/${movie_type}/${id}`,{
             params: {
                 api_key: apiKey
             }
@@ -136,9 +117,9 @@ export const fetchMovieDetail = async (id) => {
 
 
 //Fetch video trailer
-export const fetchMovieVideo = async (id) => {
+export const fetchMovieVideo = async (id,movie_type) => {
     try {
-        const {data} = await axios.get(`${movieUrl}/${id}/videos`,{
+        const {data} = await axios.get(`${url}/${movie_type}/${id}/videos`,{
             params: {
                 api_key: apiKey
             }
@@ -148,18 +129,17 @@ export const fetchMovieVideo = async (id) => {
 }
 
 //Fetch Movie Credit
-export const fetchCasts = async (id) => {
+export const fetchCasts = async (id,movie_type) => {
     try {
-        const {data} = await axios.get(`${movieUrl}/${id}/credits`,{
+        const {data} = await axios.get(`${url}/${movie_type}/${id}/credits`,{
             params: {
                 api_key: apiKey
             }
         });
-        const posterUrl = 'https://image.tmdb.org/t/p/original/'
         const modifieldData = data.cast.map((cast) => ({
             id: cast.id,
             name: cast.name,
-            profileImg: posterUrl + cast.profile_path,
+            profileImg: cast.profile_path,
             character: cast.character
         }))
         return modifieldData;
@@ -167,22 +147,23 @@ export const fetchCasts = async (id) => {
 }
 
 //Fetch Movie Similar 
-export const fetchMoviesSimilar = async (id) => {
+export const fetchMoviesSimilar = async (id,movie_type) => {
     try {
-        const {data} = await axios.get(`${movieUrl}/${id}/similar`,{
+        const {data} = await axios.get(`${url}/${movie_type}/${id}/similar`,{
             params: {
                 api_key: apiKey
             }
         });
-        const posterUrl = 'https://image.tmdb.org/t/p/original/'
+        
         const modifieldData = data.results.map((similar) => ({
             id: similar.id,
-            backPoster: posterUrl + similar.backdrop_path,
             popularity: similar.popularity,
-            title: similar.title,
-            poster: posterUrl + similar.poster_path,
+            title: similar.title || similar.name,
+            poster: similar.poster_path,
             overview: similar.overview,
             rating: similar.vote_average,
+            date: similar.release_date || similar.first_air_date,
+            movie_type: `${movie_type}`
         }))
         return modifieldData;
     } catch (error) {}
@@ -190,24 +171,26 @@ export const fetchMoviesSimilar = async (id) => {
 
 
 //
-export const fetchTrendingmovie = async (page) => {
+export const fetchAllmovie = async (page) => {
     try {
-        const {data} = await axios.get(trendingmovie,{
+        const {data} = await axios.get(allmovie,{
             params: {
                 api_key: apiKey,
                 page: page
             }
-        }); const posterUrl = 'https://image.tmdb.org/t/p/original/'
-        const modifieldData = data.results.map((similar) => ({
-            id: similar.id,
-            backPoster: posterUrl + similar.backdrop_path,
-            popularity: similar.popularity,
-            title: similar.title,
-            poster: posterUrl + similar.poster_path,
-            overview: similar.overview,
-            rating: similar.vote_average,
+        }); 
+        
+        const modifieldData = data.results.map((movie) => ({
+            id: movie.id,
+            backPoster: movie.backdrop_path,
+            popularity: movie.popularity,
+            title: movie.title,
+            poster: movie.poster_path,
+            overview: movie.overview,
+            rating: movie.vote_average,
+            date: movie.release_date,
+            movie_type : movie.media_type
         }))
-        console.log(modifieldData)
         return modifieldData;
     } catch (error) {
         
@@ -222,17 +205,71 @@ export const fetchTrendingmovieWeek = async (page) => {
                 api_key: apiKey,
                 page: page
             }
-        }); const posterUrl = 'https://image.tmdb.org/t/p/original/'
+        });
         const modifieldData = data.results.map((similar) => ({
             id: similar.id,
-            backPoster: posterUrl + similar.backdrop_path,
+            backPoster: similar.backdrop_path,
             popularity: similar.popularity,
             title: similar.title,
-            poster: posterUrl + similar.poster_path,
+            poster: similar.poster_path,
             overview: similar.overview,
             rating: similar.vote_average,
+            date: similar.release_date,
+            movie_type : similar.media_type
         }))
-        console.log(modifieldData)
+        return modifieldData;
+    } catch (error) {
+        
+    }
+}
+
+// 
+export const fetchTVserier = async (page) => {
+    try {
+        const {data} = await axios.get(tvseries,{
+            params: {
+                api_key: apiKey,
+                page: page
+            }
+        }); 
+        const modifieldData = data.results.map((tv) => ({
+            id: tv.id,
+            backPoster: tv.backdrop_path,
+            popularity: tv.popularity,
+            title: tv.name,
+            poster: tv.poster_path,
+            overview: tv.overview,
+            rating: tv.vote_average,
+            date: tv.first_air_date,
+            movie_type: "tv"
+        }))
+        return modifieldData;
+    } catch (error) {
+        
+    }
+}
+
+//popular
+
+export const fetchMoviePopular = async (page) => {
+    try {
+        const {data} = await axios.get(popular,{
+            params: {
+                api_key: apiKey,
+                page: page
+            }
+        }); 
+        const modifieldData = data.results.map((movie) => ({
+            id: movie.id,
+            backPoster: movie.backdrop_path,
+            popularity: movie.popularity,
+            title: movie.title,
+            poster: movie.poster_path,
+            overview: movie.overview,
+            rating: movie.vote_average,
+            date: movie.release_date,
+            movie_type: "movie"
+        }))
         return modifieldData;
     } catch (error) {
         

@@ -1,42 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { fetchMovies, fetchPersons, fetchTopRates } from '../../sevice/API';
+import { fetchMovies, fetchTopRates, fetchTrendingmovieWeek, fetchTVserier } from '../../sevice/API';
 import MovieCarousel from './MovieCarousel';
-import TrendingPersons from './TrendingPersons';
-import TopRate from './Toprate';
-import Footer from '../layout/Footer';
 import MovieList from './MovieList';
+import TopRate from './Toprate';
+import TVSeries from './TVSeries'
 import Header from '../layout/Header';
-
+import Footer from '../layout/Footer';
 
 const Home = () => {
     const [nowPlaying, setNowPlaying] = useState([]);
-    const [persons, setPersons] = useState([]);
     const [topRate, setTopRate] = useState([]);
-    
+    const [trending, setTrending] = useState([]);
+    const [tvSeries, setTVSeries] = useState([]);
     useEffect(() => {
         const fetchAPI = async () => {
             setNowPlaying(await fetchMovies());
-            setPersons(await fetchPersons());
+            setTrending(await fetchTrendingmovieWeek());
             setTopRate(await fetchTopRates());
+            setTVSeries(await fetchTVserier());
         }
         fetchAPI();
     }, []);
 
     return (
-        <div>
+        <>
             <Header />
-            <div style={{ position: "relative", marginTop: "65px" }} className="container">
-                <MovieCarousel movies={nowPlaying} />
+            <div className="main-wrapper">
+                <div className="container">
+                    <MovieCarousel movies={nowPlaying} />
 
-                <MovieList nowPlaying={nowPlaying} />
+                    <MovieList trending={trending} />
 
-                <TrendingPersons persons={persons} />
+                    <TVSeries tvseries = {tvSeries} />
 
-                <TopRate topRate={topRate} />
-
-                <Footer />
+                    <TopRate topRate={topRate} />
+                </div>
             </div>
-        </div>
+            <Footer />
+        </>
     );
 }
 

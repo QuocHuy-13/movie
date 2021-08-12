@@ -2,34 +2,32 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import CardMovie from '../layout/CardMovie';
 
-const Toprate = ({topRate}) => {
-    const toprate = topRate.slice(0, 8).map((item, index) => {
+const TVSeries = ({tvseries}) => {
+    const tvseriesList = tvseries.slice(0, 8).map((item, index) => {
         return (
             <div className="col-lg-3 col-sm-4 col-6" key={index}>
                 <CardMovie item={item}/>
             </div>
         )
-    })
-
-
+    });
     return (
-        <div className="topRate_movie">
+        <div className="tvseries-list">
             <div className="row mt-5">
                 <div className="col-6 col-lg-6 col-md-6 col-sm-6 movie__title">
-                    <p className="font-weight-bold">TOP RATED MOVIE</p>
+                    <p className="font-weight-bold">TV SERIES MOVIES</p>
                 </div>
                 <div className="col-6 col-lg-6 col-md-6 col-sm-6 d-flex justify-content-end align-items-center">
-                    <Link to="/alltoprates">
+                    <Link to="/tvseries">
                         <i className="fa fa-chevron-circle-right"></i>
                     </Link>
                 </div>
             </div>
 
             <div className="row mt-3">
-                {toprate}
+                {tvseriesList}
             </div>
         </div>
     );
 }
 
-export default Toprate;
+export default TVSeries;
